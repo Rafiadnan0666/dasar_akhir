@@ -57,9 +57,19 @@ const Products = () => {
   const [newComment, setNewComment] = useState("");
   const [mentionId, setMentionId] = useState(null); // ID of comment being replied to
   const [showModal, setShowModal] = useState(false); // Modal for registration prompt
+  const [quantityModalOpen, setQuantityModalOpen] = useState(false);
+  const [quantity, setQuantity] = useState(1); // Selected quantity
   const { id, pid } = useParams();
   const navigate = useNavigate();
-  const [cart, setCart] = useState([]);
+
+  // Fetch Product, User, and Comments Data
+  useEffect(() => {
+    fetchUser();
+    fetchProduct();
+    if (pid) {
+      fetchComments();
+    }
+  }, [pid]);
 
   const fetchProduct = async () => {
     if (!pid) {
@@ -82,6 +92,7 @@ const Products = () => {
       console.error("Error fetching User:", error);
     }
   };
+
   const fetchComments = async () => {
     try {
       const response = await axios.get(`http://localhost:8000/komentars`);
@@ -109,24 +120,37 @@ const Products = () => {
     }
   };
 
+  const handleAddToCartClick = () => {
+    setQuantityModalOpen(true);
+  };
+
   const handleCartSubmit = async () => {
-    if (id && pid) {
-      try {
-        const cartData = {
-          barang_id: pid,
-          user_id: id,
-          kuantitas: 1,
-          penanan_num: 0,
-        };
-        await axios.post(`http://localhost:8000/keranjangs`, cartData);
-        console.log("Product added to cart successfully!");
-      } catch (error) {
-        console.error("Error adding product to cart:", error);
-      }
-    } else {
-      console.log("User is not logged in or no product ID provided.");
+    if (!id) {
+      alert("Please log in to add items to your cart.");
+      return;
+    }
+  
+    if (quantity < 1 || quantity > product.quantity) {
+      alert(`Please enter a valid quantity (1 to ${product.quantity}).`);
+      return;
+    }
+  
+    try {
+      const cartData = {
+        barang_id: pid,
+        user_id: id,
+        kuantitas: quantity,
+        penanan_num: 0,
+      };
+      await axios.post(`http://localhost:8000/keranjangs`, cartData);
+      console.log("Product added to cart successfully!");
+      setQuantityModalOpen(false);
+    } catch (error) {
+      console.error("Error adding product to cart:", error);
+      alert("There was an error adding the product to your cart. Please try again.");
     }
   };
+  
 
   const handleReply = (commentId) => {
     setMentionId(commentId);
@@ -137,13 +161,10 @@ const Products = () => {
     navigate("/register");
   };
 
-  useEffect(() => {
-    fetchUser();
-    fetchProduct();
-    if (pid) {
-      fetchComments();
-    }
-  }, [pid]);
+  const handleQuantityChange = (e) => {
+    const value = Math.min(e.target.value, product.quantity);
+    setQuantity(value);
+  };
 
   if (!product) {
     return (
@@ -180,7 +201,7 @@ const Products = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={handleCartSubmit}
+                  onClick={handleAddToCartClick}
                   style={{ marginTop: "1rem" }}
                 >
                   {id ? "Add to Cart" : "Login to Cart"}
@@ -221,12 +242,8 @@ const Products = () => {
                 <div key={comment.id}>
                   <CommentBox>
                     <Typography variant="body1">
-                      {user
-                        .filter((user) => user.id === comment.user_id)
-                        .map((user) => (
-                          <span key={user.id}>{user.name}</span>
-                        ))}
-                      : {comment.teks_komentar}
+                      {user.find((user) => user.id === comment.user_id)?.name} :{" "}
+                      {comment.teks_komentar}
                     </Typography>
                     <Button onClick={() => handleReply(comment.id)}>
                       Reply
@@ -241,17 +258,9 @@ const Products = () => {
                       >
                         <CommentBox>
                           <Typography variant="body1">
-                            {user
-                              .filter((user) => user.id === reply.user_id)
-                              .map((user) => (
-                                <span key={user.id}>{user.name}</span>
-                              ))}
+                            {user.find((user) => user.id === reply.user_id)?.name}
                             {"> "}
-                            {user
-                              .filter((user) => user.id === comment.user_id)
-                              .map((user) => (
-                                <span key={user.id}>{user.name}</span>
-                              ))}
+                            {user.find((user) => user.id === comment.user_id)?.name}{" "}
                             : {reply.teks_komentar}
                           </Typography>
                           <Button onClick={() => handleReply(reply.id)}>
@@ -266,7 +275,7 @@ const Products = () => {
         </Grid>
       </Container>
 
-      <Modal open={showModal} onClose={handleModalClose}>
+      <Modal open={quantityModalOpen} onClose={() => setQuantityModalOpen(false)}>
         <Box
           sx={{
             position: "absolute",
@@ -280,19 +289,23 @@ const Products = () => {
           }}
         >
           <Typography variant="h6" component="h2">
-            Please Register
+            Select Quantity
           </Typography>
-          <Typography sx={{ mt: 2 }}>
-            You need to register to view and purchase products.
-          </Typography>
+          <TextField
+            type="number"
+            value={quantity}
+            onChange={handleQuantityChange}
+            inputProps={{ min: 1, max: product.quantity }}
+            fullWidth
+          />
           <Button
-            onClick={handleModalClose}
+            onClick={handleCartSubmit}
             variant="contained"
             color="primary"
             fullWidth
             sx={{ mt: 2 }}
           >
-            Go to Registration
+            Confirm
           </Button>
         </Box>
       </Modal>

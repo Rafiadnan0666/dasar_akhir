@@ -7,11 +7,9 @@ const Login = () => {
     const [userData, setUserData] = useState({ nama: '', password: '' });
     const [error, setError] = useState('');
     const navigate = useNavigate();
-
     const handleChange = (e) => {
         setUserData({ ...userData, [e.target.name]: e.target.value });
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(''); 
@@ -25,8 +23,6 @@ const Login = () => {
             }else {
                 navigate(`../../${response.data.user_id}/seller`);
             }
-           
-            
         } catch (error) {
             if (error.response && error.response.status === 401) {
                 setError('Username or Password is incorrect');
@@ -35,7 +31,6 @@ const Login = () => {
             }
         }
     };
-
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <Paper elevation={3} className="p-6 w-96">
@@ -74,5 +69,4 @@ const Login = () => {
         </div>
     );
 };
-
 export default Login;

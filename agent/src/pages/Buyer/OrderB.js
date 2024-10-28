@@ -33,8 +33,8 @@ const OrderB = () => {
       <div className="container py-5">
         <div className="row mb-4">
           <div className="col-md-12 text-center">
-            <h1 className="display-4">Your Orders</h1>
-            <p className="lead">Review your recent purchases and order details below.</p>
+            <h1 className="display-4">Pesanan</h1>
+            <p className="lead">Pesamam</p>
           </div>
         </div>
         <div className="row">

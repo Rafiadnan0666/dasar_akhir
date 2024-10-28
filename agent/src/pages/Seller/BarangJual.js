@@ -15,6 +15,7 @@ const BarangJual = () => {
     nama: "",
     deskripsi: "",
     harga: "",
+    quantity :  "",
     gambar_url: "",
     kategori_id: "",
   });
@@ -51,6 +52,7 @@ const BarangJual = () => {
         nama: "",
         deskripsi: "",
         harga: "",
+        quantity : "",
         gambar_url: "",
         kategori_id: "",
       });
@@ -64,6 +66,7 @@ const BarangJual = () => {
       nama: "",
       deskripsi: "",
       harga: "",
+      quantity : "",
       gambar_url: "",
       kategori_id: "",
     });
@@ -82,6 +85,7 @@ const BarangJual = () => {
       await axios.post("http://localhost:8000/barangs/", newBarang);
       setBarangs([...barangs, newBarang]);
       handleCloseModal();
+      window.location.reload();
       swal("YEYYYY tambah barang");
     } catch (error) {
       console.error("Error adding barang:", error);
@@ -194,6 +198,15 @@ const BarangJual = () => {
               label="Harga"
               name="harga"
               value={iniBarang.harga}
+              onChange={handleChange}
+              fullWidth
+              type="number"
+              className="mb-4"
+            />
+            <TextField
+              label="Quantity"
+              name="quantity"
+              value={iniBarang.quantity}
               onChange={handleChange}
               fullWidth
               type="number"

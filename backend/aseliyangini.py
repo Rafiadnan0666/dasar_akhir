@@ -6,13 +6,12 @@ from uuid import UUID, uuid4
 
 app = FastAPI()
 
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3001"],  
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  
-    allow_headers=["*"],  
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 users = []
@@ -27,7 +26,7 @@ class User(BaseModel):
     nama: str
     password: str
     alamat: Optional[str] = None
-    role:  Optional[str] = "pembeli"
+    role: Optional[str] = "pembeli"
 
 class Kategori(BaseModel):
     id: Optional[UUID] = None
@@ -39,6 +38,7 @@ class Barang(BaseModel):
     deskripsi: str
     harga: float
     gambar_url: str  
+    quantity: int
     kategori_id: UUID
     penjual_id: UUID  
 
@@ -46,7 +46,7 @@ class Pesanan(BaseModel):
     id: Optional[UUID] = None
     pembeli_id: UUID  
     keranjang_id: UUID
-    kuantitas: int
+    barang_id: UUID 
 
 class Komentar(BaseModel):
     id: Optional[UUID] = None
@@ -60,8 +60,7 @@ class Keranjang(BaseModel):
     barang_id: UUID
     user_id: UUID
     kuantitas: int
-    penanan_num :int
-
+    penanan_num: int
 @app.get("/")
 def home():
     return {"project_akhir": "dasar pemrograman"}
@@ -70,7 +69,7 @@ def home():
 def register_user(user: User):
     for existing_user in users:
         if existing_user.nama == user.nama:
-            raise HTTPException(status_code=400, detail="Pengguna sudah ada")
+            raise HTTPException(status_code=400, detail="sudah ada pake cuy")
 
     user.id = uuid4()
     users.append(user)
@@ -161,12 +160,14 @@ def buat_pesanan(pesanan: Pesanan):
     pesanan.id = uuid4()
     if not any(user.id == pesanan.pembeli_id and user.role == "pembeli" for user in users):
         raise HTTPException(status_code=404, detail="Pembeli tidak ditemukan atau tidak terdaftar sebagai pembeli")
-    if not any(barang.id == pesanan.barang_id for barang in barangs):
+    barang = next((b for b in barangs if b.id == pesanan.barang_id), None)
+    if barang is None:
         raise HTTPException(status_code=404, detail="Barang tidak ditemukan")
-    
+    if barang.quantity <= 0:
+        raise HTTPException(status_code=400, detail="Stok barang tidak cukup")
+    barang.quantity -= 1  
     pesanans.append(pesanan)
     return pesanan
-
 
 
 @app.get("/pesanans/", response_model=List[Pesanan])
