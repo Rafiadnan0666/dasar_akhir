@@ -55,10 +55,10 @@ const Products = () => {
   const [comments, setComments] = useState([]);
   const [user, setUser] = useState([]);
   const [newComment, setNewComment] = useState("");
-  const [mentionId, setMentionId] = useState(null); // ID of comment being replied to
-  const [showModal, setShowModal] = useState(false); // Modal for registration prompt
+  const [mentionId, setMentionId] = useState(null);
+  const [showModal, setShowModal] = useState(false); 
   const [quantityModalOpen, setQuantityModalOpen] = useState(false);
-  const [quantity, setQuantity] = useState(1); // Selected quantity
+  const [quantity, setQuantity] = useState(1); 
   const { id, pid } = useParams();
   const navigate = useNavigate();
 

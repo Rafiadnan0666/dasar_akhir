@@ -66,13 +66,12 @@ const Cart = () => {
       pembeli_id: id,
       keranjang_id: keranjang.id,
       barang_id: keranjang.barang_id, 
-      kuantitas: keranjang.kuantitas
     }));
 
     console.log('Pesanan Data:', pesananData);
 
     try {
-      const response = await axios.post('http://localhost:8000/pesanans/', pesananData);
+      const response = await axios.post('http://localhost:8000/pesanans/', ...pesananData);
     } catch (error) {
       console.error('Error during checkout:', error);
       setError('Error during checkout. Please try again.');
@@ -80,11 +79,11 @@ const Cart = () => {
   };
 
   if (loading) {
-    return <p>Loading...</p>; 
+    return <Layout><p>Loading...</p></Layout>; 
   }
 
   if (error) {
-    return <p>{error}</p>; 
+    return ( <Layout><p>{error}</p></Layout> ); 
   }
 
   return (
@@ -94,8 +93,8 @@ const Cart = () => {
         <div className="row">
           <div className="col-md-8">
             {cart.length > 0 ? cart.map(keranjang => {
-              const { id, barang_id, kuantitas } = keranjang; // Destructure keranjang
-              const barang = barangs.find(b => b.id === barang_id); // Get barang data
+              const { id, barang_id, kuantitas } = keranjang; 
+              const barang = barangs.find(b => b.id === barang_id); 
 
               return (
                 <div key={id} className="card mb-3 shadow-sm">
@@ -104,14 +103,14 @@ const Cart = () => {
                       <input 
                         type="checkbox" 
                         className="form-check-input"
-                        id={`keranjang-${id}`}
+                        id={`keranjang-Rp. {id}`}
                         onChange={() => toggleSelectItem(keranjang)} 
                         checked={sdahpilih.includes(id)}
                       />
-                      <label className="form-check-label" htmlFor={`keranjang-${id}`}>
+                      <label className="form-check-label" htmlFor={`keranjang-Rp. {id}`}>
                         <h5>{barang ? barang.nama : 'Unknown Item'}</h5> 
                         <p>Quantity: {kuantitas}</p>
-                        <p>Harga: ${barang ? barang.harga : 'N/A'}</p> 
+                        <p>Harga: Rp. {barang ? barang.harga : 'N/A'}</p> 
                       </label>
                     </div>
                   </div>
@@ -128,7 +127,7 @@ const Cart = () => {
               <div className="card-body">
                 <h4>Ringkasan Pesanan</h4> 
                 <p>Total Quantity: {quantity}</p>
-                <p>Total Harga: ${total}</p> 
+                <p>Total Harga: Rp. {total}</p> 
                 <button 
                   className="btn btn-primary btn-block mt-3" 
                   onClick={handleCekout}

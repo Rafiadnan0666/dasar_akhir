@@ -15,7 +15,12 @@ app.add_middleware(
 )
 
 users = []
-kategoris = []
+kategoris = [
+     {"id": uuid4(), "nama_kategori": "Elektronik"},
+    {"id": uuid4(), "nama_kategori": "Pakaian"},
+    {"id": uuid4(), "nama_kategori": "Makanan"},
+    {"id": uuid4(), "nama_kategori": "Peralatan Rumah Tangga"}
+]
 barangs = []
 pesanans = []
 komentars = []
@@ -165,7 +170,6 @@ def buat_pesanan(pesanan: Pesanan):
         raise HTTPException(status_code=404, detail="Barang tidak ditemukan")
     if barang.quantity <= 0:
         raise HTTPException(status_code=400, detail="Stok barang tidak cukup")
-    barang.quantity -= 1  
     pesanans.append(pesanan)
     return pesanan
 
