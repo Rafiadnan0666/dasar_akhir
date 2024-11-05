@@ -153,7 +153,7 @@ const BarangJual = () => {
                 />
                 <div className="mt-4 space-x-2">
                   <Button
-                    variant="outlined"
+                    variant="outlined"            
                     color="primary"
                     onClick={() => handleOpenModal("edit", barang)}
                   >

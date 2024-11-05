@@ -3,10 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 from uuid import UUID, uuid4
+import uvicorn
 
-app = FastAPI()
+cihuyy = FastAPI()
 
-app.add_middleware(
+cihuyy.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
@@ -65,12 +66,11 @@ class Keranjang(BaseModel):
     barang_id: UUID
     user_id: UUID
     kuantitas: int
-    penanan_num: int
-@app.get("/")
+@cihuyy.get("/")
 def home():
     return {"project_akhir": "dasar pemrograman"}
 
-@app.post("/register/")
+@cihuyy.post("/register/")
 def register_user(user: User):
     for existing_user in users:
         if existing_user.nama == user.nama:
@@ -82,7 +82,7 @@ def register_user(user: User):
 
 
 
-@app.post("/login/")
+@cihuyy.post("/login/")
 def login_user(user: User):
     for existing_user in users:
         if existing_user.nama == user.nama and existing_user.password == user.password:
@@ -91,13 +91,13 @@ def login_user(user: User):
 
 
 
-@app.get("/users/", response_model=List[User])
+@cihuyy.get("/users/", response_model=List[User])
 def lihat_semua_pengguna():
     return users
 
 
 
-@app.post("/kategoris/", response_model=Kategori)
+@cihuyy.post("/kategoris/", response_model=Kategori)
 def buat_kategori(kategori: Kategori):
     kategori.id = uuid4()
     kategoris.append(kategori)
@@ -105,13 +105,13 @@ def buat_kategori(kategori: Kategori):
 
 
 
-@app.get("/kategoris/", response_model=List[Kategori])
+@cihuyy.get("/kategoris/", response_model=List[Kategori])
 def lihat_semua_kategori():
     return kategoris
 
 
 
-@app.post("/barangs/", response_model=Barang)
+@cihuyy.post("/barangs/", response_model=Barang)
 def buat_barang(barang: Barang):
     barang.id = uuid4()
     if not any(user.id == barang.penjual_id and user.role == "penjual" for user in users):
@@ -121,13 +121,13 @@ def buat_barang(barang: Barang):
     return barang
 
 
-@app.get("/barangs/", response_model=List[Barang])
+@cihuyy.get("/barangs/", response_model=List[Barang])
 def lihat_semua_barang():
     return barangs
 
 
 
-@app.get("/barangs/{barang_id}", response_model=Barang)
+@cihuyy.get("/barangs/{barang_id}", response_model=Barang)
 def lihat_barang(barang_id: UUID):
     for barang in barangs:
         if barang.id == barang_id:
@@ -136,7 +136,7 @@ def lihat_barang(barang_id: UUID):
 
 
 
-@app.put("/barangs/{barang_id}", response_model=Barang)
+@cihuyy.put("/barangs/{barang_id}", response_model=Barang)
 def update_barang(barang_id: UUID, barang_baru: Barang):
     for index, barang in enumerate(barangs):
         if barang.id == barang_id:
@@ -150,7 +150,7 @@ def update_barang(barang_id: UUID, barang_baru: Barang):
 
 
 
-@app.delete("/barangs/{barang_id}")
+@cihuyy.delete("/barangs/{barang_id}")
 def hapus_barang(barang_id: UUID):
     for index, barang in enumerate(barangs):
         if barang.id == barang_id:
@@ -160,7 +160,7 @@ def hapus_barang(barang_id: UUID):
 
 
 
-@app.post("/pesanans/", response_model=Pesanan)
+@cihuyy.post("/pesanans/", response_model=Pesanan)
 def buat_pesanan(pesanan: Pesanan):
     pesanan.id = uuid4()
     if not any(user.id == pesanan.pembeli_id and user.role == "pembeli" for user in users):
@@ -174,13 +174,13 @@ def buat_pesanan(pesanan: Pesanan):
     return pesanan
 
 
-@app.get("/pesanans/", response_model=List[Pesanan])
+@cihuyy.get("/pesanans/", response_model=List[Pesanan])
 def lihat_semua_pesanan():
     return pesanans
 
 
 
-@app.get("/pesanans/{pesanan_id}", response_model=Pesanan)
+@cihuyy.get("/pesanans/{pesanan_id}", response_model=Pesanan)
 def lihat_pesanan(pesanan_id: UUID):
     for pesanan in pesanans:
         if pesanan.id == pesanan_id:
@@ -189,7 +189,7 @@ def lihat_pesanan(pesanan_id: UUID):
 
 
 
-@app.delete("/pesanans/{pesanan_id}")
+@cihuyy.delete("/pesanans/{pesanan_id}")
 def hapus_pesanan(pesanan_id: UUID):
     for index, pesanan in enumerate(pesanans):
         if pesanan.id == pesanan_id:
@@ -199,7 +199,7 @@ def hapus_pesanan(pesanan_id: UUID):
 
 
 
-@app.post("/keranjangs/", response_model=Keranjang)
+@cihuyy.post("/keranjangs/", response_model=Keranjang)
 def buat_keranjang(keranjang: Keranjang):
     keranjang.id = uuid4()
     if not any(user.id == keranjang.user_id and user.role == "pembeli" for user in users):
@@ -212,13 +212,13 @@ def buat_keranjang(keranjang: Keranjang):
 
 
 
-@app.get("/keranjangs/", response_model=List[Keranjang])
+@cihuyy.get("/keranjangs/", response_model=List[Keranjang])
 def lihat_semua_keranjang():
     return keranjangs
 
 
 
-@app.get("/keranjangs/{keranjang_id}", response_model=Keranjang)
+@cihuyy.get("/keranjangs/{keranjang_id}", response_model=Keranjang)
 def lihat_keranjang(keranjang_id: UUID):
     for keranjang in keranjangs:
         if keranjang.id == keranjang_id:
@@ -226,7 +226,7 @@ def lihat_keranjang(keranjang_id: UUID):
     raise HTTPException(status_code=404, detail="Keranjang tidak ditemukan")
 
 
-@app.delete("/keranjangs/{keranjang_id}")
+@cihuyy.delete("/keranjangs/{keranjang_id}")
 def hapus_keranjang(keranjang_id: UUID):
     for index, keranjang in enumerate(keranjangs):
         if keranjang.id == keranjang_id:
@@ -236,7 +236,7 @@ def hapus_keranjang(keranjang_id: UUID):
 
 
 
-@app.post("/komentars/", response_model=Komentar)
+@cihuyy.post("/komentars/", response_model=Komentar)
 def buat_komentar(komentar: Komentar):
     komentar.id = uuid4()
     if not any(barang.id == komentar.barang_id for barang in barangs):
@@ -249,13 +249,13 @@ def buat_komentar(komentar: Komentar):
 
 
 
-@app.get("/komentars/", response_model=List[Komentar])
+@cihuyy.get("/komentars/", response_model=List[Komentar])
 def lihat_semua_komentar():
     return komentars
 
 
 
-@app.get("/komentars/filter/", response_model=List[Komentar])
+@cihuyy.get("/komentars/filter/", response_model=List[Komentar])
 def filter_komentar(barang_id: Optional[UUID] = None, user_id: Optional[UUID] = None):
     filtered_komentars = komentars
 
@@ -269,7 +269,7 @@ def filter_komentar(barang_id: Optional[UUID] = None, user_id: Optional[UUID] = 
 
 
 
-@app.get("/komentars/{komentar_id}", response_model=Komentar)
+@cihuyy.get("/komentars/{komentar_id}", response_model=Komentar)
 def lihat_komentar(komentar_id: UUID):
     for komentar in komentars:
         if komentar.id == komentar_id:
@@ -278,7 +278,7 @@ def lihat_komentar(komentar_id: UUID):
 
 
 
-@app.delete("/komentars/{komentar_id}")
+@cihuyy.delete("/komentars/{komentar_id}")
 def hapus_komentar(komentar_id: UUID):
     for index, komentar in enumerate(komentars):
         if komentar.id == komentar_id:
@@ -287,6 +287,5 @@ def hapus_komentar(komentar_id: UUID):
     raise HTTPException(status_code=404, detail="Komentar tidak ditemukan")
 
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="localhost", port=8000)
+
+uvicorn.run(cihuyy, host="localhost", port=8000)

@@ -11,6 +11,7 @@ import Seller from "./pages/Seller/Seller";
 import Cart from "./pages/Buyer/Cart";
 import OrderB from "./pages/Buyer/OrderB";
 import BarangJual from "./pages/Seller/BarangJual";
+import Komen from "./pages/Seller/Komen";
 
 function App() {
   return (
@@ -29,6 +30,8 @@ function App() {
         <Route path=":id/seller" element={<Seller/>} />
         <Route path=":id/products" element={<Products />} />
         <Route path=":id/products/:pid" element={<Products />} />
+        <Route path=":id/seller/comments" element={<Komen/>} />
+        <Route path=":id/seller/order" element={<Komen/>} />
         <Route path="*" element={<NotFound/>} />
       </Routes>
     </Router>
